@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobType {
+  GENERATE_PDF
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  DEAD
+}
+
+model Job {
+  id             String   @id @default(uuid()) @db.Uuid
+  type           JobType
+  payload        Json
+  status         JobStatus @default(PENDING)
+  attempts       Int      @default(0)
+  maxAttempts    Int
+  lastError      String?
+  runAt          DateTime @default(now())
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  idempotencyKey String   @unique
+  outputPath     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([status, runAt])
+}
