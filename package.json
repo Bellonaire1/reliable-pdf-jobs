@@ -8,17 +8,21 @@
     "dev": "tsx src/server.ts",
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "verify:api": "tsx scripts/verify-api.ts"
+    "verify:api": "tsx scripts/verify-api.ts",
+    "worker": "tsx src/worker.ts",
+    "verify:worker": "tsx scripts/verify-worker.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
+    "pdfkit": "^0.17.2",
     "zod": "^4.1.8"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.0",
+    "@types/pdfkit": "^0.13.9",
     "prisma": "^6.16.0",
     "supertest": "^7.1.4",
     "tsx": "^4.20.5",

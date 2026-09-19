@@ -1,10 +1,10 @@
 # Reliable PDF Jobs
 
-Task 2, Step 1: the design and foundation for a database-backed background job system.
+Task 2, Step 3: a database-backed background job system with a separate PDF worker.
 
 ## Purpose
 
-The HTTP request path will only validate the request and enqueue a database job. It will return an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separate worker process. The worker, PDF generation, retry policy, recovery, and status endpoints are intentionally reserved for later steps.
+The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. Retry policy, backoff, stuck-job recovery, dead-letter views, and manual retry remain future steps.
 
 ## Job Lifecycle
 
@@ -74,7 +74,7 @@ Configuration will be loaded centrally from environment variables and validated 
 | Maximum jitter | `MAX_JITTER_MS` | `500` |
 | Stuck processing timeout | `STUCK_JOB_TIMEOUT_MS` | `300000` |
 
-Only the configuration shape and defaults are established in this step. Worker behavior, retries, backoff, jitter, and stuck-job recovery are not implemented yet.
+The worker uses `WORKER_CONCURRENCY`, `POLL_INTERVAL_MS`, and the test-only observability settings below. Retries, backoff, jitter, and stuck-job recovery are not implemented yet.
 
 ## Database Design
 
@@ -87,9 +87,12 @@ prisma/schema.prisma  # Job persistence model
 src/config.ts         # Central validated configuration shape
 src/app.ts            # Minimal Express application
 src/server.ts         # HTTP process entry point
+src/worker.ts         # Separate worker process entry point
+src/worker/claim.ts   # Atomic PostgreSQL job claim
+src/worker/pdf.ts     # PDF output generation
 ```
 
-The worker process and PDF generation are deliberately absent from this foundation.
+The API server does not start the worker. Run them as separate processes with `npm run dev` and `npm run worker`.
 
 ## Enqueue Contract
 
@@ -127,6 +130,31 @@ The response path only writes the database job. It does not run a worker or gene
 ## Idempotency
 
 The `idempotencyKey` unique database constraint is the final duplicate protection. The API creates the row first and handles a Prisma unique-constraint conflict by fetching and returning the existing job. This is safe when concurrent requests race; an API-level check followed by an insert alone is not sufficient under concurrency. Repeated client submissions therefore return the existing job instead of creating another one.
+
+## Worker Process
+
+The API and worker are separate processes:
+
+```bash
+npm run dev
+npm run worker
+```
+
+The worker polls for eligible `PENDING` jobs, claims work atomically, and processes at most `WORKER_CONCURRENCY` jobs at once. When no work is available it waits for `POLL_INTERVAL_MS`. `SIGINT` and `SIGTERM` stop new claims and allow active jobs to finish before disconnecting from PostgreSQL.
+
+For deterministic verification only, `WORK_SIMULATED_DELAY_MS` adds a delay inside PDF execution. Its default is `0`; it is a testing aid, not business logic. `PDF_FAIL_FOR_TEST=true` is also a test-only switch that makes PDF execution throw so the temporary failure path can be verified.
+
+## Atomic Job Claim
+
+`SELECT` followed by a separate `UPDATE` is unsafe: two worker processes can select the same `PENDING` row before either updates it. `claimNextJob()` instead uses one parameterized PostgreSQL statement containing a CTE, `FOR UPDATE SKIP LOCKED`, and an `UPDATE ... RETURNING`.
+
+The statement selects the oldest eligible row where `status = PENDING` and `runAt <= NOW()`, locks it while skipping rows locked by another worker, changes it to `PROCESSING`, sets `startedAt`, increments `attempts` exactly once, and returns the row. PostgreSQL therefore lets only one concurrent claimant win a given row.
+
+## PDF Output
+
+`GENERATE_PDF` reads `title` and `content` from `Job.payload`, writes a valid PDF to `outputs/<job-id>.pdf`, and records the relative path in `outputPath`. The PDF binary is kept on the filesystem rather than in PostgreSQL. The `outputs/` directory is ignored by Git.
+
+On successful execution the job becomes `SUCCEEDED`, `finishedAt` is populated, `lastError` is cleared, and `outputPath` is set. For this step only, a handled PDF error becomes `FAILED` with `lastError` and `finishedAt`; retry and backoff transitions are intentionally deferred.
 
 ## Validation
 

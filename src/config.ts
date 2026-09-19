@@ -10,6 +10,8 @@ const configSchema = z.object({
   BASE_BACKOFF_MS: z.coerce.number().int().positive().default(1000),
   MAX_JITTER_MS: z.coerce.number().int().nonnegative().default(500),
   STUCK_JOB_TIMEOUT_MS: z.coerce.number().int().positive().default(300000),
+  WORK_SIMULATED_DELAY_MS: z.coerce.number().int().nonnegative().default(0),
+  PDF_FAIL_FOR_TEST: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
 });
 
 export const config = configSchema.parse({
@@ -21,4 +23,6 @@ export const config = configSchema.parse({
   BASE_BACKOFF_MS: process.env.BASE_BACKOFF_MS,
   MAX_JITTER_MS: process.env.MAX_JITTER_MS,
   STUCK_JOB_TIMEOUT_MS: process.env.STUCK_JOB_TIMEOUT_MS,
+  WORK_SIMULATED_DELAY_MS: process.env.WORK_SIMULATED_DELAY_MS,
+  PDF_FAIL_FOR_TEST: process.env.PDF_FAIL_FOR_TEST,
 });
