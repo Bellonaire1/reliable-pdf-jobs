@@ -7,7 +7,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/server.ts",
     "start": "node dist/server.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify:api": "tsx scripts/verify-api.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",
@@ -18,6 +19,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.0",
     "prisma": "^6.16.0",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }

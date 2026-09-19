@@ -91,6 +91,43 @@ src/server.ts         # HTTP process entry point
 
 The worker process and PDF generation are deliberately absent from this foundation.
 
+## Enqueue Contract
+
+`POST /api/v1/jobs` validates a report request, creates a `PENDING` job, and returns `202 Accepted` immediately. `202` is used because the request has been accepted for processing but the PDF does not exist yet; `201 Created` or `200 OK` would incorrectly suggest that the report resource or slow work is already complete.
+
+The request requires an `Idempotency-Key` header. Repeating a request with the same key returns the existing job id and status rather than creating another row.
+
+Example request:
+
+```http
+POST /api/v1/jobs
+Idempotency-Key: monthly-property-report-2026-09
+Content-Type: application/json
+
+{"title":"Monthly Property Report","content":"Report body content..."}
+```
+
+Example response:
+
+```json
+{
+  "data": {
+    "jobId": "94f6d8c4-4f8f-4c9e-a5d7-dc9be30b6751",
+    "status": "PENDING"
+  }
+}
+```
+
+The response path only writes the database job. It does not run a worker or generate a PDF.
+
+## Status Contract
+
+`GET /api/v1/jobs/:id` returns the public job status fields: `id`, `type`, `status`, `attempts`, `maxAttempts`, `lastError`, `runAt`, `startedAt`, `finishedAt`, `outputPath`, `createdAt`, and `updatedAt`. A malformed UUID returns `400`; a valid UUID with no matching job returns `404`.
+
+## Idempotency
+
+The `idempotencyKey` unique database constraint is the final duplicate protection. The API creates the row first and handles a Prisma unique-constraint conflict by fetching and returning the existing job. This is safe when concurrent requests race; an API-level check followed by an insert alone is not sufficient under concurrency. Repeated client submissions therefore return the existing job instead of creating another one.
+
 ## Validation
 
 ```bash
