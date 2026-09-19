@@ -20,14 +20,13 @@ function wait(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-export async function generatePdf(jobId: string, payload: unknown): Promise<string> {
-  if (config.PDF_FAIL_FOR_TEST) {
-    throw new Error("PDF generation forced to fail by PDF_FAIL_FOR_TEST");
-  }
-
+export async function generatePdf(jobId: string, payload: unknown, attempt: number): Promise<string> {
   const report = payloadSchema.parse(payload);
   if (config.WORK_SIMULATED_DELAY_MS > 0) {
     await wait(config.WORK_SIMULATED_DELAY_MS);
+  }
+  if (config.PDF_FAIL_FOR_TEST || attempt <= config.PDF_FAIL_FIRST_N_ATTEMPTS) {
+    throw new Error("PDF generation forced to fail by test configuration");
   }
 
   await mkdir(outputDirectory, { recursive: true });

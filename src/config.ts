@@ -9,9 +9,11 @@ const configSchema = z.object({
   POLL_INTERVAL_MS: z.coerce.number().int().positive().default(1000),
   BASE_BACKOFF_MS: z.coerce.number().int().positive().default(1000),
   MAX_JITTER_MS: z.coerce.number().int().nonnegative().default(500),
+  MAX_BACKOFF_MS: z.coerce.number().int().positive().default(86_400_000),
   STUCK_JOB_TIMEOUT_MS: z.coerce.number().int().positive().default(300000),
   WORK_SIMULATED_DELAY_MS: z.coerce.number().int().nonnegative().default(0),
   PDF_FAIL_FOR_TEST: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  PDF_FAIL_FIRST_N_ATTEMPTS: z.coerce.number().int().nonnegative().default(0),
 });
 
 export const config = configSchema.parse({
@@ -22,7 +24,9 @@ export const config = configSchema.parse({
   POLL_INTERVAL_MS: process.env.POLL_INTERVAL_MS,
   BASE_BACKOFF_MS: process.env.BASE_BACKOFF_MS,
   MAX_JITTER_MS: process.env.MAX_JITTER_MS,
+  MAX_BACKOFF_MS: process.env.MAX_BACKOFF_MS,
   STUCK_JOB_TIMEOUT_MS: process.env.STUCK_JOB_TIMEOUT_MS,
   WORK_SIMULATED_DELAY_MS: process.env.WORK_SIMULATED_DELAY_MS,
   PDF_FAIL_FOR_TEST: process.env.PDF_FAIL_FOR_TEST,
+  PDF_FAIL_FIRST_N_ATTEMPTS: process.env.PDF_FAIL_FIRST_N_ATTEMPTS,
 });

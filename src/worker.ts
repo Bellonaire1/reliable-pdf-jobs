@@ -3,6 +3,7 @@ import { config } from "./config";
 import { prisma } from "./prisma";
 import { claimNextJob } from "./worker/claim";
 import { processJob } from "./worker/process";
+import { requeueDueFailedJobs } from "./worker/retry";
 
 const workerId = randomUUID();
 const activeJobs = new Set<Promise<void>>();
@@ -16,6 +17,10 @@ async function runWorker(): Promise<void> {
   console.log(`[worker ${workerId}] started concurrency=${config.WORKER_CONCURRENCY}`);
 
   while (!shuttingDown) {
+    const requeued = await requeueDueFailedJobs();
+    if (requeued > 0) {
+      console.log(`[worker ${workerId}] requeued=${requeued}`);
+    }
     while (!shuttingDown && activeJobs.size < config.WORKER_CONCURRENCY) {
       const job = await claimNextJob();
       if (!job) {

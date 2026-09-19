@@ -103,7 +103,7 @@ async function main() {
   }
 
   const failureId = await enqueue(`worker-failure-${randomUUID()}`);
-  const failureWorker = startWorker({ PDF_FAIL_FOR_TEST: "true" });
+  const failureWorker = startWorker({ PDF_FAIL_FOR_TEST: "true", MAX_ATTEMPTS: "1" });
   try {
     await waitFor(
       () => prisma.job.findUniqueOrThrow({ where: { id: failureId } }),
@@ -133,7 +133,7 @@ async function main() {
   assert.equal(winners.length, 1);
   const claimed = await prisma.job.findUniqueOrThrow({ where: { id: raceJob.id } });
   assert.equal(claims.filter(Boolean).length, 1);
-  assert.equal(claimed.attempts, 1);
+  assert.equal(claimed.attempts, 0);
   assert.equal(claimed.status, "PROCESSING");
 
   console.log(`Worker verification passed; maximum active jobs=${maximumProcessing}; atomic winners=${winners.length}`);

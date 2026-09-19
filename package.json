@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "verify:api": "tsx scripts/verify-api.ts",
     "worker": "tsx src/worker.ts",
-    "verify:worker": "tsx scripts/verify-worker.ts"
+    "verify:worker": "tsx scripts/verify-worker.ts",
+    "verify:retries": "tsx scripts/verify-retries.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",

@@ -1,10 +1,10 @@
 # Reliable PDF Jobs
 
-Task 2, Step 3: a database-backed background job system with a separate PDF worker.
+Task 2, Step 4: a database-backed background job system with retries and dead jobs.
 
 ## Purpose
 
-The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. Retry policy, backoff, stuck-job recovery, dead-letter views, and manual retry remain future steps.
+The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. Stuck-job recovery, dead-letter views, and manual retry remain future steps.
 
 ## Job Lifecycle
 
@@ -72,9 +72,10 @@ Configuration will be loaded centrally from environment variables and validated 
 | Poll interval | `POLL_INTERVAL_MS` | `1000` |
 | Base exponential backoff | `BASE_BACKOFF_MS` | `1000` |
 | Maximum jitter | `MAX_JITTER_MS` | `500` |
+| Maximum backoff cap | `MAX_BACKOFF_MS` | `86400000` |
 | Stuck processing timeout | `STUCK_JOB_TIMEOUT_MS` | `300000` |
 
-The worker uses `WORKER_CONCURRENCY`, `POLL_INTERVAL_MS`, and the test-only observability settings below. Retries, backoff, jitter, and stuck-job recovery are not implemented yet.
+The worker uses `WORKER_CONCURRENCY`, `POLL_INTERVAL_MS`, `BASE_BACKOFF_MS`, `MAX_JITTER_MS`, and `MAX_BACKOFF_MS`. The PDF failure controls and simulated delay are test-only settings.
 
 ## Database Design
 
@@ -148,13 +149,35 @@ For deterministic verification only, `WORK_SIMULATED_DELAY_MS` adds a delay insi
 
 `SELECT` followed by a separate `UPDATE` is unsafe: two worker processes can select the same `PENDING` row before either updates it. `claimNextJob()` instead uses one parameterized PostgreSQL statement containing a CTE, `FOR UPDATE SKIP LOCKED`, and an `UPDATE ... RETURNING`.
 
-The statement selects the oldest eligible row where `status = PENDING` and `runAt <= NOW()`, locks it while skipping rows locked by another worker, changes it to `PROCESSING`, sets `startedAt`, increments `attempts` exactly once, and returns the row. PostgreSQL therefore lets only one concurrent claimant win a given row.
+The statement selects the oldest eligible row where `status = PENDING` and `runAt <= NOW()`, locks it while skipping rows locked by another worker, changes it to `PROCESSING`, sets `startedAt`, and returns the row. Claiming does not increment `attempts`; PostgreSQL therefore lets only one concurrent claimant win a given row, while execution finalization counts the attempt exactly once.
 
 ## PDF Output
 
 `GENERATE_PDF` reads `title` and `content` from `Job.payload`, writes a valid PDF to `outputs/<job-id>.pdf`, and records the relative path in `outputPath`. The PDF binary is kept on the filesystem rather than in PostgreSQL. The `outputs/` directory is ignored by Git.
 
-On successful execution the job becomes `SUCCEEDED`, `finishedAt` is populated, `lastError` is cleared, and `outputPath` is set. For this step only, a handled PDF error becomes `FAILED` with `lastError` and `finishedAt`; retry and backoff transitions are intentionally deferred.
+On successful execution the job becomes `SUCCEEDED`, `finishedAt` is populated, `lastError` is cleared, and `outputPath` is set. A handled PDF error increments `attempts` once, records `lastError` and `finishedAt`, and either schedules a retry or moves the job to `DEAD`.
+
+## Failure and Retry Lifecycle
+
+`FAILED` is not `DEAD`:
+
+- `FAILED` means the current execution failed, the failure is durable and observable, and another attempt is scheduled.
+- `DEAD` means `maxAttempts` has been exhausted and automatic processing stops. Human intervention will be required in a later step.
+
+Each actual execution attempt is counted exactly once when it finishes. A claim changes `PENDING` to `PROCESSING` and sets `startedAt` without changing `attempts`. Success finalization increments `attempts` once. Failure finalization increments `attempts` once and uses the incremented value to choose `FAILED` or `DEAD`. This avoids counting one execution both at claim and completion.
+
+Retryable failures transition `PROCESSING -> FAILED` and set `runAt` to a future time. The worker atomically requeues due failures with `FAILED -> PENDING`; only `PENDING` jobs are claimable. `runAt` therefore separates a durable waiting failure from work currently eligible for a claim.
+
+The retry delay is exponential with bounded jitter:
+
+```text
+BASE_BACKOFF_MS * 2^(attempt - 1) + jitter
+0 <= jitter <= MAX_JITTER_MS
+```
+
+The result is never negative and is capped by `MAX_BACKOFF_MS`. Jitter prevents many workers or jobs that fail together from retrying in the same synchronized burst.
+
+For development verification, `PDF_FAIL_FOR_TEST=true` fails every execution and `PDF_FAIL_FIRST_N_ATTEMPTS` fails only the first N executions. These controls are not part of the public request payload or production business behavior.
 
 ## Validation
 

@@ -16,9 +16,8 @@ export async function claimNextJob(): Promise<Job | null> {
     UPDATE "Job" AS job
     SET
       "status" = 'PROCESSING',
-      "startedAt" = NOW(),
-      "attempts" = "attempts" + 1,
-      "updatedAt" = NOW()
+      "startedAt" = CURRENT_TIMESTAMP AT TIME ZONE 'UTC',
+      "updatedAt" = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
     FROM candidate
     WHERE job."id" = candidate."id"
     RETURNING job.*
