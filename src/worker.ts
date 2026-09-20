@@ -4,6 +4,7 @@ import { prisma } from "./prisma";
 import { claimNextJob } from "./worker/claim";
 import { processJob } from "./worker/process";
 import { requeueDueFailedJobs } from "./worker/retry";
+import { recoverStuckJobs } from "./worker/recovery";
 
 const workerId = randomUUID();
 const activeJobs = new Set<Promise<void>>();
@@ -17,6 +18,10 @@ async function runWorker(): Promise<void> {
   console.log(`[worker ${workerId}] started concurrency=${config.WORKER_CONCURRENCY}`);
 
   while (!shuttingDown) {
+    const recovered = await recoverStuckJobs();
+    for (const job of recovered) {
+      console.log(`[worker ${workerId}] recovered job=${job.id} previous=PROCESSING resulting=${job.status} attempts=${job.attempts}`);
+    }
     const requeued = await requeueDueFailedJobs();
     if (requeued > 0) {
       console.log(`[worker ${workerId}] requeued=${requeued}`);

@@ -1,10 +1,10 @@
 # Reliable PDF Jobs
 
-Task 2, Step 4: a database-backed background job system with retries and dead jobs.
+Task 2, Steps 5-8: a database-backed background job system with idempotent work, recovery, and a dead-letter view.
 
 ## Purpose
 
-The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. Stuck-job recovery, dead-letter views, and manual retry remain future steps.
+The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. This increment also recovers stuck work and provides a diagnostic dead-letter view with manual retry.
 
 ## Job Lifecycle
 
@@ -74,8 +74,10 @@ Configuration will be loaded centrally from environment variables and validated 
 | Maximum jitter | `MAX_JITTER_MS` | `500` |
 | Maximum backoff cap | `MAX_BACKOFF_MS` | `86400000` |
 | Stuck processing timeout | `STUCK_JOB_TIMEOUT_MS` | `300000` |
+| Simulated work delay | `WORK_SIMULATED_DELAY_MS` | `0` |
+| Post-output crash delay | `WORK_POST_OUTPUT_DELAY_MS` | `0` |
 
-The worker uses `WORKER_CONCURRENCY`, `POLL_INTERVAL_MS`, `BASE_BACKOFF_MS`, `MAX_JITTER_MS`, and `MAX_BACKOFF_MS`. The PDF failure controls and simulated delay are test-only settings.
+The worker uses `WORKER_CONCURRENCY`, `POLL_INTERVAL_MS`, `BASE_BACKOFF_MS`, `MAX_JITTER_MS`, `MAX_BACKOFF_MS`, and `STUCK_JOB_TIMEOUT_MS`. The PDF failure controls, simulated delay, and post-output delay are test-only settings.
 
 ## Database Design
 
@@ -91,6 +93,8 @@ src/server.ts         # HTTP process entry point
 src/worker.ts         # Separate worker process entry point
 src/worker/claim.ts   # Atomic PostgreSQL job claim
 src/worker/pdf.ts     # PDF output generation
+src/worker/recovery.ts # Atomic stuck-job recovery
+src/dead-letter.ts    # Minimal diagnostic dead-letter page
 ```
 
 The API server does not start the worker. Run them as separate processes with `npm run dev` and `npm run worker`.
@@ -178,6 +182,33 @@ BASE_BACKOFF_MS * 2^(attempt - 1) + jitter
 The result is never negative and is capped by `MAX_BACKOFF_MS`. Jitter prevents many workers or jobs that fail together from retrying in the same synchronized burst.
 
 For development verification, `PDF_FAIL_FOR_TEST=true` fails every execution and `PDF_FAIL_FIRST_N_ATTEMPTS` fails only the first N executions. These controls are not part of the public request payload or production business behavior.
+
+## Work Idempotency
+
+Enqueue idempotency and work idempotency protect different boundaries:
+
+- Enqueue idempotency uses the unique `Idempotency-Key` to create one `Job` row for repeated client submissions.
+- Work idempotency uses the deterministic `outputs/<job-id>.pdf` path so repeated execution of one job produces one logical output.
+
+PDF generation first checks that final path for a valid PDF. If it exists, the worker reuses the path and skips generation. Otherwise it writes to a unique temporary file, waits for the PDF stream to finish, and atomically renames it to the deterministic final path. This protects the crash window where output is safely written but the worker dies before the database success update. A later execution can reuse the final output rather than creating another PDF.
+
+## Stuck Job Recovery
+
+A job is stuck when it remains `PROCESSING` and its `startedAt` is older than `STUCK_JOB_TIMEOUT_MS`. The worker periodically runs `recoverStuckJobs()` using one PostgreSQL statement with row locking and a status/time predicate. Two sweepers cannot recover and count the same processing row.
+
+Recovery counts the abandoned execution exactly once because claims do not increment `attempts`. If the incremented count is below `maxAttempts`, recovery sets `PROCESSING -> PENDING`, sets `runAt` to now, clears `startedAt`, and records a diagnostic error. At the limit it sets `PROCESSING -> DEAD`, records the diagnostic error, and stops automatic processing.
+
+## Dead Letter Queue
+
+`DEAD` means automatic processing has stopped and human intervention is required. `GET /api/v1/jobs/dead` exposes diagnostic context including the payload, attempts, error, timestamps, and output path. `/dead-letter` is a minimal HTML diagnostic page with loading, empty, and error states plus a retry button.
+
+`POST /api/v1/jobs/:id/retry` is allowed only for `DEAD` jobs. It atomically changes the same row back to `PENDING`, resets `attempts` to `0`, clears attempt error/timestamps, and preserves the job id, payload, type, idempotency key, and any existing output. A second concurrent retry receives `409`; no second row is created.
+
+## Testing the Crash Window
+
+`WORK_POST_OUTPUT_DELAY_MS` is a development/test-only aid. When greater than zero, the worker waits after the final PDF has been atomically written but before recording database success. This creates a deterministic window for terminating the worker and verifying `PROCESSING` recovery and output reuse. Its default is `0` and it is not public request input.
+
+The final 50-job break-it run has not been performed yet.
 
 ## Validation
 

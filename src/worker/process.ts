@@ -1,6 +1,11 @@
 import { Job } from "@prisma/client";
+import { config } from "../config";
 import { generatePdf } from "./pdf";
 import { calculateBackoffWithJitter, recordFailure, recordSuccess } from "./retry";
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
 
 export async function processJob(job: Job, activeCount: () => number, workerId: string): Promise<void> {
   const startedAt = new Date().toISOString();
@@ -9,6 +14,9 @@ export async function processJob(job: Job, activeCount: () => number, workerId: 
 
   try {
     const outputPath = await generatePdf(job.id, job.payload, attempt);
+    if (config.WORK_POST_OUTPUT_DELAY_MS > 0) {
+      await wait(config.WORK_POST_OUTPUT_DELAY_MS);
+    }
     const recordedAttempt = await recordSuccess(job.id, outputPath);
     console.log(`[worker ${workerId}] success job=${job.id} attempt=${recordedAttempt} active=${activeCount()}`);
   } catch (error) {

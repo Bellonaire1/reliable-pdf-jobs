@@ -1,7 +1,8 @@
 import PDFDocument from "pdfkit";
 import { createWriteStream } from "node:fs";
-import { mkdir, rename, rm } from "node:fs/promises";
+import { mkdir, rename, rm, stat, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { config } from "../config";
 
@@ -16,12 +17,29 @@ export function outputPathForJob(jobId: string): string {
   return path.join("outputs", `${jobId}.pdf`);
 }
 
+async function hasValidFinalOutput(finalPath: string): Promise<boolean> {
+  try {
+    const file = await stat(finalPath);
+    if (!file.isFile() || file.size < 5) return false;
+    const header = await readFile(finalPath, { encoding: "utf8", flag: "r" });
+    return header.startsWith("%PDF-");
+  } catch {
+    return false;
+  }
+}
+
 function wait(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 export async function generatePdf(jobId: string, payload: unknown, attempt: number): Promise<string> {
   const report = payloadSchema.parse(payload);
+  const relativePath = outputPathForJob(jobId);
+  const finalPath = path.join(process.cwd(), relativePath);
+  if (await hasValidFinalOutput(finalPath)) {
+    return relativePath;
+  }
+
   if (config.WORK_SIMULATED_DELAY_MS > 0) {
     await wait(config.WORK_SIMULATED_DELAY_MS);
   }
@@ -30,9 +48,7 @@ export async function generatePdf(jobId: string, payload: unknown, attempt: numb
   }
 
   await mkdir(outputDirectory, { recursive: true });
-  const relativePath = outputPathForJob(jobId);
-  const finalPath = path.join(process.cwd(), relativePath);
-  const temporaryPath = `${finalPath}.tmp`;
+  const temporaryPath = `${finalPath}.${process.pid}.${randomUUID()}.tmp`;
 
   try {
     await new Promise<void>((resolve, reject) => {
@@ -51,6 +67,7 @@ export async function generatePdf(jobId: string, payload: unknown, attempt: numb
       document.end();
     });
 
+    await unlink(finalPath).catch(() => undefined);
     await rename(temporaryPath, finalPath);
     return relativePath;
   } catch (error) {

@@ -26,6 +26,21 @@ const jobResponseFields = {
   updatedAt: true,
 } satisfies Prisma.JobSelect;
 
+const deadJobFields = {
+  id: true,
+  type: true,
+  payload: true,
+  attempts: true,
+  maxAttempts: true,
+  lastError: true,
+  runAt: true,
+  startedAt: true,
+  finishedAt: true,
+  outputPath: true,
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.JobSelect;
+
 function jobResponse(job: Prisma.JobGetPayload<{ select: typeof jobResponseFields }>) {
   return job;
 }
@@ -80,6 +95,44 @@ jobsRouter.post("/", async (request, response) => {
 
     throw error;
   }
+});
+
+jobsRouter.get("/dead", async (_request, response) => {
+  const jobs = await prisma.job.findMany({
+    where: { status: "DEAD" },
+    orderBy: [{ finishedAt: "desc" }, { id: "asc" }],
+    select: deadJobFields,
+  });
+  response.json({ data: jobs });
+});
+
+jobsRouter.post("/:id/retry", async (request, response) => {
+  const id = jobIdSchema.parse(request.params.id);
+  const result = await prisma.job.updateMany({
+    where: { id, status: "DEAD" },
+    data: {
+      status: "PENDING",
+      attempts: 0,
+      runAt: new Date(),
+      startedAt: null,
+      finishedAt: null,
+      lastError: null,
+    },
+  });
+
+  if (result.count === 0) {
+    const existing = await prisma.job.findUnique({ where: { id }, select: { id: true, status: true } });
+    if (!existing) {
+      response.status(404).json({ error: { code: "JOB_NOT_FOUND", message: "Job not found" } });
+      return;
+    }
+    response.status(409).json({
+      error: { code: "JOB_NOT_DEAD", message: "Only DEAD jobs can be manually retried" },
+    });
+    return;
+  }
+
+  response.json({ data: { jobId: id, status: "PENDING" } });
 });
 
 jobsRouter.get("/:id", async (request, response) => {
