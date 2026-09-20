@@ -1,0 +1,19 @@
+Worker PID killed: 21344
+Job id: 4b87b1cb-2d1b-4128-a081-836fd08aa174
+BEFORE KILL status: PROCESSING
+BEFORE KILL PDF exists: YES (C:\Users\USER\Desktop\reliable-pdf-jobs\outputs\4b87b1cb-2d1b-4128-a081-836fd08aa174.pdf)
+AFTER KILL status: PROCESSING
+AFTER RECOVERY status: SUCCEEDED
+AFTER RECOVERY attempts: 2
+Final output count: 1
+Existing PDF reused: PASS
+
+Worker log before kill:
+[worker break-stuck-before-kill] started concurrency=1
+[worker break-stuck-before-kill] start job=4b87b1cb-2d1b-4128-a081-836fd08aa174 attempt=1 active=1 at=2026-09-20T17:35:17.825Z
+
+Worker log after recovery:
+[worker break-stuck-recovery] started concurrency=1
+[worker break-stuck-recovery] recovered job=4b87b1cb-2d1b-4128-a081-836fd08aa174 previous=PROCESSING resulting=PENDING attempts=1
+[worker break-stuck-recovery] start job=4b87b1cb-2d1b-4128-a081-836fd08aa174 attempt=2 active=1 at=2026-09-20T17:35:19.149Z
+[worker break-stuck-recovery] success job=4b87b1cb-2d1b-4128-a081-836fd08aa174 attempt=2 active=1

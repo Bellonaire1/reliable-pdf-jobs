@@ -12,7 +12,8 @@
     "worker": "tsx src/worker.ts",
     "verify:worker": "tsx scripts/verify-worker.ts",
     "verify:retries": "tsx scripts/verify-retries.ts",
-    "verify:recovery": "tsx scripts/verify-recovery.ts"
+    "verify:recovery": "tsx scripts/verify-recovery.ts",
+    "break-it": "tsx scripts/break-it.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",

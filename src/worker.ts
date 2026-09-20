@@ -6,7 +6,7 @@ import { processJob } from "./worker/process";
 import { requeueDueFailedJobs } from "./worker/retry";
 import { recoverStuckJobs } from "./worker/recovery";
 
-const workerId = randomUUID();
+const workerId = process.env.WORKER_ID ?? randomUUID();
 const activeJobs = new Set<Promise<void>>();
 let shuttingDown = false;
 

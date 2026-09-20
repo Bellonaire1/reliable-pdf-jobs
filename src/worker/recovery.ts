@@ -5,14 +5,13 @@ import { prisma } from "../prisma";
 export type RecoveredJob = Pick<Job, "id" | "attempts" | "maxAttempts" | "status">;
 
 export async function recoverStuckJobs(): Promise<RecoveredJob[]> {
-  const cutoff = new Date(Date.now() - config.STUCK_JOB_TIMEOUT_MS);
   return prisma.$queryRaw<RecoveredJob[]>(Prisma.sql`
     WITH stuck AS (
       SELECT "id"
       FROM "Job"
       WHERE "status" = 'PROCESSING'
         AND "startedAt" IS NOT NULL
-        AND "startedAt" < ${cutoff}
+        AND "startedAt" < (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') - (${config.STUCK_JOB_TIMEOUT_MS} * INTERVAL '1 millisecond')
       FOR UPDATE SKIP LOCKED
     )
     UPDATE "Job" AS job
