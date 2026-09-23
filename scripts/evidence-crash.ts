@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { access, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { ChildProcess, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { prisma } from "../src/prisma";
 import { outputPathForJob } from "../src/worker/pdf";
 
@@ -61,8 +61,32 @@ function assertWorkerGone(pid: number): void {
   assert.equal(workerCommand(pid), "", `Evidence worker PID ${pid} is still running.`);
 }
 
-function startWorker(workerId: string, overrides: Record<string, string>): ChildProcess {
+function powershellQuote(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+function startWorker(workerId: string, overrides: Record<string, string>): number {
   const tsxCli = path.join(projectRoot, "node_modules", "tsx", "dist", "cli.mjs");
+  if (process.platform === "win32") {
+    const environment = Object.entries({ ...overrides, WORKER_ID: workerId })
+      .map(([key, value]) => `$env:${key}=${powershellQuote(value)};`)
+      .join(" ");
+    const command = [
+      environment,
+      `$worker = Start-Process -FilePath ${powershellQuote(process.execPath)}`,
+      `-ArgumentList @(${powershellQuote(tsxCli)}, ${powershellQuote("src/worker.ts")})`,
+      `-WorkingDirectory ${powershellQuote(projectRoot)} -WindowStyle Hidden -PassThru;`,
+      "$worker.Id",
+    ].join(" ");
+    const pid = Number(execFileSync("powershell.exe", [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      command,
+    ], { encoding: "utf8" }).trim());
+    assert.ok(Number.isInteger(pid) && pid > 0);
+    return pid;
+  }
   const child = spawn(process.execPath, [tsxCli, "src/worker.ts"], {
     cwd: projectRoot,
     env: { ...process.env, ...overrides, WORKER_ID: workerId },
@@ -70,15 +94,14 @@ function startWorker(workerId: string, overrides: Record<string, string>): Child
     detached: true,
   });
   child.unref();
-  return child;
+  assert.ok(child.pid);
+  return child.pid;
 }
 
-async function stopWorker(worker: ChildProcess): Promise<void> {
-  if (worker.exitCode !== null) return;
-  worker.kill("SIGTERM");
-  await new Promise<void>((resolve) => {
-    worker.once("close", () => resolve());
-  });
+async function stopWorker(workerPid: number): Promise<void> {
+  if (workerCommand(workerPid) === "") return;
+  process.kill(workerPid, "SIGTERM");
+  await waitFor(() => Promise.resolve(workerCommand(workerPid)), (command) => command === "", 5_000);
 }
 
 async function restorePending(state: CrashState): Promise<void> {
@@ -106,7 +129,7 @@ async function prepare() {
     where: { id: candidate.id },
     data: { runAt: new Date(Date.now() + 86_400_000) },
   })));
-  const worker = startWorker(`evidence-crash-${job.id}`, {
+  const workerPid = startWorker(`evidence-crash-${job.id}`, {
     WORKER_CONCURRENCY: "1",
     POLL_INTERVAL_MS: "20",
     STUCK_JOB_TIMEOUT_MS: String(stuckTimeoutMs),
@@ -114,10 +137,9 @@ async function prepare() {
     PDF_FAIL_FOR_TEST: "false",
     PDF_FAIL_FIRST_N_ATTEMPTS: "0",
   });
-  assert.ok(worker.pid);
   const state: CrashState = {
     jobId: job.id,
-    workerPid: worker.pid,
+    workerPid,
     outputPath,
     timeoutMs: stuckTimeoutMs,
     pausedPending: pending.map((candidate) => ({ id: candidate.id, runAt: candidate.runAt.toISOString() })),
@@ -134,14 +156,14 @@ async function prepare() {
     );
     console.log("SCREENSHOT 1 READY");
     console.log(`JOB ID: ${job.id}`);
-    console.log(`WORKER PID: ${worker.pid}`);
+    console.log(`WORKER PID: ${workerPid}`);
     console.log(`STATUS: ${current.status}`);
     console.log(`ATTEMPTS: ${current.attempts}`);
     console.log("PDF EXISTS: YES");
     console.log(`FINISHED AT: ${current.finishedAt === null ? "null" : current.finishedAt.toISOString()}`);
     console.log("NEXT COMMAND: npm run evidence:crash:kill");
   } catch (error) {
-    await stopWorker(worker);
+    await stopWorker(workerPid);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -169,7 +191,7 @@ async function kill() {
   console.log(`STATUS: ${after.status}`);
   console.log(`ATTEMPTS: ${after.attempts}`);
   console.log("PDF EXISTS: YES");
-  console.log(`FINISHED AT: ${after.finishedAt === null ? "null" : after.finishedAt.toISOString()}`);
+  console.log("FINISHED AT: null");
   console.log("NEXT COMMAND: npm run evidence:crash:recover");
   await prisma.$disconnect();
 }
@@ -183,7 +205,7 @@ async function recover() {
   const remaining = before.startedAt.getTime() + state.timeoutMs - Date.now();
   if (remaining > 0) await sleep(remaining + 50);
   const beforeStat = await stat(state.outputPath);
-  const worker = startWorker(`evidence-recovery-${state.jobId}`, {
+  const workerPid = startWorker(`evidence-recovery-${state.jobId}`, {
     WORKER_CONCURRENCY: "1",
     POLL_INTERVAL_MS: "20",
     STUCK_JOB_TIMEOUT_MS: String(state.timeoutMs),
@@ -191,7 +213,6 @@ async function recover() {
     PDF_FAIL_FOR_TEST: "false",
     PDF_FAIL_FIRST_N_ATTEMPTS: "0",
   });
-  assert.ok(worker.pid);
   let pendingRestored = false;
   try {
     const finalJob = await waitFor(
@@ -203,7 +224,7 @@ async function recover() {
     assert.equal(finalJob.attempts, 2);
     assert.equal(afterStat.mtimeMs, beforeStat.mtimeMs);
     assert.equal(outputFiles.length, 1);
-    await stopWorker(worker);
+    await stopWorker(workerPid);
     await restorePending(state);
     pendingRestored = true;
     console.log("SCREENSHOT 3 READY");
@@ -214,7 +235,7 @@ async function recover() {
     console.log(`FINAL OUTPUT COUNT: ${outputFiles.length}`);
     console.log(`FINISHED AT: ${finalJob.finishedAt?.toISOString() ?? "null"}`);
   } finally {
-    if (worker.exitCode === null) await stopWorker(worker);
+    await stopWorker(workerPid);
     if (!pendingRestored) await restorePending(state);
     await prisma.$disconnect();
   }
