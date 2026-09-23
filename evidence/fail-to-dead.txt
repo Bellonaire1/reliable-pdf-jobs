@@ -1,18 +1,20 @@
 Configured maxAttempts: 3
-Job id: 4b4af8fe-1c79-4a1c-9900-dd48b9f982f7
+Job id: b218a9a8-a659-4b46-b194-e9ec7b1cfe2f
+Observed lifecycle: PENDING(attempts=0) -> PROCESSING(attempts=0) -> FAILED(attempts=1) -> PROCESSING(attempts=1) -> FAILED(attempts=2) -> DEAD(attempts=3)
 Observed attempts: 3
 Observed FAILED scheduling delays (ms): 100, 200
 Logged calculated backoffs (ms): 100, 200
-Final DEAD timestamp: 2026-09-20T17:35:16.623Z
+Jitter configuration: MAX_JITTER_MS=0; observed jitter: 0 ms
+Final DEAD timestamp: 2026-09-23T15:16:51.431Z
 No fourth execution: PASS
 
 Worker log:
 [worker break-dead-worker] started concurrency=2
-[worker break-dead-worker] start job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=1 active=1 at=2026-09-20T17:35:16.197Z
-[worker break-dead-worker] failed job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=1 active=1 retryAt=2026-09-20T17:35:16.302Z delayMs=100 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=1 active=1 at=2026-09-23T15:16:50.985Z
+[worker break-dead-worker] failed job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=1 active=1 retryAt=2026-09-23T15:16:51.095Z delayMs=100 error=PDF generation forced to fail by test configuration
 [worker break-dead-worker] requeued=1
-[worker break-dead-worker] start job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=2 active=1 at=2026-09-20T17:35:16.332Z
-[worker break-dead-worker] failed job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=2 active=1 retryAt=2026-09-20T17:35:16.585Z delayMs=200 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=2 active=1 at=2026-09-23T15:16:51.101Z
+[worker break-dead-worker] failed job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=2 active=1 retryAt=2026-09-23T15:16:51.412Z delayMs=200 error=PDF generation forced to fail by test configuration
 [worker break-dead-worker] requeued=1
-[worker break-dead-worker] start job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=3 active=1 at=2026-09-20T17:35:16.619Z
-[worker break-dead-worker] DEAD job=4b4af8fe-1c79-4a1c-9900-dd48b9f982f7 attempt=3 active=1 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=3 active=1 at=2026-09-23T15:16:51.428Z
+[worker break-dead-worker] DEAD job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=3 active=1 error=PDF generation forced to fail by test configuration

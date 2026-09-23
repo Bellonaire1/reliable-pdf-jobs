@@ -15,7 +15,7 @@ Purpose: prove retry scheduling grows, FAILED is durable, and maxAttempts produc
 Configuration: maxAttempts 3; base backoff 100 ms; maximum jitter 0 ms.
 Exact procedure: force every PDF execution to fail, record database states and logs, then wait for a possible fourth execution.
 Observed result:
-Job: 4b4af8fe-1c79-4a1c-9900-dd48b9f982f7; maxAttempts: 3; observed attempts: 3; backoffs: 100, 200 ms; final status: DEAD; no fourth execution: PASS
+Job: b218a9a8-a659-4b46-b194-e9ec7b1cfe2f; maxAttempts: 3; observed attempts: 3; backoffs: 100, 200 ms; final status: DEAD; no fourth execution: PASS
 PASS. Evidence: evidence/fail-to-dead.txt
 
 ## Test 3 - Real Worker Kill and Stuck Recovery
@@ -23,7 +23,7 @@ Purpose: prove a real worker kill after output creation is recovered without dup
 Configuration: post-output delay 2000 ms; stuck timeout 200 ms.
 Exact procedure: start a known child, wait for PROCESSING and final PDF, SIGKILL only that PID, wait past timeout, restart worker, and inspect row/filesystem.
 Observed result:
-PID: 21344; job: 4b87b1cb-2d1b-4128-a081-836fd08aa174; final status: SUCCEEDED; final attempts: 2; final output count: 1; existing PDF reused: PASS
+PID: 26164; job: 3e379fb6-c402-49e4-a0e0-65898c56fdd6; final status: SUCCEEDED; final attempts: 2; final output count: 1; existing PDF reused: PASS
 PASS. Evidence: evidence/stuck-recovery.txt
 
 ## Test 4 - Duplicate Idempotency Key
@@ -31,7 +31,7 @@ Purpose: prove concurrent submissions use one database row.
 Configuration: two concurrent HTTP requests with one Idempotency-Key.
 Exact procedure: submit both requests concurrently and count rows by key.
 Observed result:
-Job: 54f47996-4a8a-44bd-bacc-2c726dcb00c2; rows for key: 1; same job id: PASS
+Job: 2c2edd4e-fffc-45ba-8c2a-970fb514245a; rows for key: 1; same job id: PASS
 PASS. Evidence: evidence/idempotency-double-submit.txt
 
 ## Test 5 - Two Workers Same Queue
@@ -43,7 +43,7 @@ Worker A: 10; Worker B: 10; unique jobs: 20; duplicate claims: 0; duplicate outp
 PASS. Evidence: evidence/two-workers.txt
 
 ## Lifecycle Rows
-PENDING, PROCESSING, FAILED, SUCCEEDED, and DEAD rows were retained in PostgreSQL for manual screenshot capture.
+PENDING=94e64bf0-cd85-4bed-bb73-5d2084e8bae4; PROCESSING=6a8abcf4-39a6-4f7b-b455-6362d3f16f95; SUCCEEDED=d57f18f5-a48d-4db6-84e2-b4abcdac9765; FAILED=7c5e4960-39f6-4baa-ab76-d58550d76edf; DEAD=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f were retained in PostgreSQL for manual screenshot capture.
 Dead-letter API rows: 2; dead-letter page HTTP status: 200
 
 Screenshot slots remain PENDING. No screenshots were fabricated.

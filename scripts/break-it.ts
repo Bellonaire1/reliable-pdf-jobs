@@ -9,6 +9,7 @@ import { config } from "../src/config";
 import { prisma } from "../src/prisma";
 import { claimNextJob } from "../src/worker/claim";
 import { outputPathForJob } from "../src/worker/pdf";
+import { processJob } from "../src/worker/process";
 import { recordFailure } from "../src/worker/retry";
 
 const evidenceDirectory = path.join(process.cwd(), "evidence");
@@ -169,9 +170,11 @@ async function testFailToDead() {
   await writeEvidence("fail-to-dead.txt", [
     "Configured maxAttempts: 3",
     `Job id: ${id}`,
+    `Observed lifecycle: ${snapshots.map((snapshot) => `${snapshot.status}(attempts=${snapshot.attempts})`).join(" -> ")}`,
     `Observed attempts: ${finalJob.attempts}`,
     `Observed FAILED scheduling delays (ms): ${delays.join(", ")}`,
     `Logged calculated backoffs (ms): ${loggedDelays.join(", ")}`,
+    "Jitter configuration: MAX_JITTER_MS=0; observed jitter: 0 ms",
     `Final DEAD timestamp: ${finalJob.finishedAt?.toISOString()}`,
     "No fourth execution: PASS",
     "",
@@ -325,6 +328,13 @@ async function testTwoWorkers() {
 }
 
 async function prepareAllStatuses(deadId: string) {
+  const succeededId = await enqueue(`break-status-succeeded-${randomUUID()}`);
+  const succeededClaim = await claimNextJob();
+  assert.equal(succeededClaim?.id, succeededId);
+  await processJob(succeededClaim, () => 1, "break-status-worker");
+  const succeeded = await prisma.job.findUniqueOrThrow({ where: { id: succeededId } });
+  assert.equal(succeeded.status, "SUCCEEDED");
+
   const processingId = await enqueue(`break-status-processing-${randomUUID()}`);
   const claimed = await claimNextJob();
   assert.equal(claimed?.id, processingId);
@@ -334,8 +344,9 @@ async function prepareAllStatuses(deadId: string) {
   const failed = await recordFailure(failedId, "Retained FAILED evidence row", 3_600_000);
   assert.equal(failed.status, "FAILED");
   const pendingId = await enqueue(`break-status-pending-${randomUUID()}`);
-  const statuses = await prisma.job.findMany({ where: { id: { in: [pendingId, processingId, failedId, deadId] } }, select: { id: true, status: true } });
-  assert.deepEqual(new Set(statuses.map((job) => job.status)), new Set(["PENDING", "PROCESSING", "FAILED", "DEAD"]));
+  const statuses = await prisma.job.findMany({ where: { id: { in: [succeededId, pendingId, processingId, failedId, deadId] } }, select: { id: true, status: true } });
+  assert.deepEqual(new Set(statuses.map((job) => job.status)), new Set(["PENDING", "PROCESSING", "SUCCEEDED", "FAILED", "DEAD"]));
+  return { succeededId, pendingId, processingId, failedId, deadId };
 }
 
 async function main() {
@@ -352,11 +363,13 @@ async function main() {
   const stuck = await testWorkerKill();
   const duplicate = await testDuplicateKey();
   const twoWorkers = await testTwoWorkers();
-  await prepareAllStatuses(dead.id);
+  const statusRows = await prepareAllStatuses(dead.id);
 
   const deadList = await request(app).get("/api/v1/jobs/dead");
   const deadPage = await request(app).get("/dead-letter");
   assert.equal(deadList.status, 200);
+  assert.ok(deadList.body.data.some((job: { id: string; payload: unknown; attempts: number; maxAttempts: number; lastError: string | null }) =>
+    job.id === dead.id && job.payload && job.attempts === 3 && job.maxAttempts === 3 && Boolean(job.lastError)));
   assert.equal(deadPage.status, 200);
   assert.match(deadPage.text, /Retry job/);
   await writeFile(path.join(process.cwd(), "BREAK-IT-RESULTS.md"), [
@@ -405,7 +418,7 @@ async function main() {
     "PASS. Evidence: evidence/two-workers.txt",
     "",
     "## Lifecycle Rows",
-    "PENDING, PROCESSING, FAILED, SUCCEEDED, and DEAD rows were retained in PostgreSQL for manual screenshot capture.",
+    `PENDING=${statusRows.pendingId}; PROCESSING=${statusRows.processingId}; SUCCEEDED=${statusRows.succeededId}; FAILED=${statusRows.failedId}; DEAD=${statusRows.deadId} were retained in PostgreSQL for manual screenshot capture.`,
     `Dead-letter API rows: ${deadList.body.data.length}; dead-letter page HTTP status: ${deadPage.status}`,
     "",
     "Screenshot slots remain PENDING. No screenshots were fabricated.",
