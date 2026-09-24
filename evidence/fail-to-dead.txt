@@ -1,20 +1,22 @@
 Configured maxAttempts: 3
-Job id: b218a9a8-a659-4b46-b194-e9ec7b1cfe2f
-Observed lifecycle: PENDING(attempts=0) -> PROCESSING(attempts=0) -> FAILED(attempts=1) -> PROCESSING(attempts=1) -> FAILED(attempts=2) -> DEAD(attempts=3)
+Job id: 797ca640-71b0-461a-baa0-806b549d040d
+Observed lifecycle: PENDING(attempts=0) -> FAILED(attempts=1) -> PROCESSING(attempts=1) -> FAILED(attempts=2) -> DEAD(attempts=3)
 Observed attempts: 3
 Observed FAILED scheduling delays (ms): 100, 200
 Logged calculated backoffs (ms): 100, 200
+Attempt 1 failureTime=2026-09-24T08:03:02.168Z scheduledRunAt=2026-09-24T08:03:02.268Z backoff=100 ms
+Attempt 2 failureTime=2026-09-24T08:03:02.340Z scheduledRunAt=2026-09-24T08:03:02.540Z backoff=200 ms
 Jitter configuration: MAX_JITTER_MS=0; observed jitter: 0 ms
-Final DEAD timestamp: 2026-09-23T15:16:51.431Z
+Final DEAD timestamp: 2026-09-24T08:03:02.572Z
 No fourth execution: PASS
 
 Worker log:
 [worker break-dead-worker] started concurrency=2
-[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=1 active=1 at=2026-09-23T15:16:50.985Z
-[worker break-dead-worker] failed job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=1 active=1 retryAt=2026-09-23T15:16:51.095Z delayMs=100 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=797ca640-71b0-461a-baa0-806b549d040d attempt=1 active=1 at=2026-09-24T08:03:02.161Z
+[worker break-dead-worker] failed job=797ca640-71b0-461a-baa0-806b549d040d attempt=1 active=1 retryAt=2026-09-24T08:03:02.268Z delayMs=100 error=PDF generation forced to fail by test configuration
 [worker break-dead-worker] requeued=1
-[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=2 active=1 at=2026-09-23T15:16:51.101Z
-[worker break-dead-worker] failed job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=2 active=1 retryAt=2026-09-23T15:16:51.412Z delayMs=200 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=797ca640-71b0-461a-baa0-806b549d040d attempt=2 active=1 at=2026-09-24T08:03:02.272Z
+[worker break-dead-worker] failed job=797ca640-71b0-461a-baa0-806b549d040d attempt=2 active=1 retryAt=2026-09-24T08:03:02.540Z delayMs=200 error=PDF generation forced to fail by test configuration
 [worker break-dead-worker] requeued=1
-[worker break-dead-worker] start job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=3 active=1 at=2026-09-23T15:16:51.428Z
-[worker break-dead-worker] DEAD job=b218a9a8-a659-4b46-b194-e9ec7b1cfe2f attempt=3 active=1 error=PDF generation forced to fail by test configuration
+[worker break-dead-worker] start job=797ca640-71b0-461a-baa0-806b549d040d attempt=3 active=1 at=2026-09-24T08:03:02.569Z
+[worker break-dead-worker] DEAD job=797ca640-71b0-461a-baa0-806b549d040d attempt=3 active=1 error=PDF generation forced to fail by test configuration

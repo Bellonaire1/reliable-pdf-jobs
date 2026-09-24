@@ -6,103 +6,103 @@ Duplicate processing observed: 0
 
 Worker log:
 [worker break-50-worker] started concurrency=2
-[worker break-50-worker] start job=85d8a8fc-93f6-4d48-8e6e-1dd41f5398b5 attempt=1 active=1 at=2026-09-23T15:16:44.892Z
-[worker break-50-worker] start job=46ed947a-27b5-483d-a199-45c6238ad5f3 attempt=1 active=2 at=2026-09-23T15:16:44.899Z
-[worker break-50-worker] success job=46ed947a-27b5-483d-a199-45c6238ad5f3 attempt=1 active=2
-[worker break-50-worker] start job=08748a35-08dd-42fb-9ab3-85583b4e016a attempt=1 active=2 at=2026-09-23T15:16:45.109Z
-[worker break-50-worker] success job=85d8a8fc-93f6-4d48-8e6e-1dd41f5398b5 attempt=1 active=2
-[worker break-50-worker] start job=97ee6284-825f-4563-ac41-15293468bd31 attempt=1 active=2 at=2026-09-23T15:16:45.208Z
-[worker break-50-worker] success job=08748a35-08dd-42fb-9ab3-85583b4e016a attempt=1 active=2
-[worker break-50-worker] start job=d18fe608-dcca-4bea-9064-8d174d83b621 attempt=1 active=2 at=2026-09-23T15:16:45.251Z
-[worker break-50-worker] success job=97ee6284-825f-4563-ac41-15293468bd31 attempt=1 active=2
-[worker break-50-worker] start job=1e51852c-46c0-465b-b86b-53d5819a8299 attempt=1 active=2 at=2026-09-23T15:16:45.344Z
-[worker break-50-worker] success job=d18fe608-dcca-4bea-9064-8d174d83b621 attempt=1 active=2
-[worker break-50-worker] start job=cd6aff78-c9f3-4484-91c7-b3798844107d attempt=1 active=2 at=2026-09-23T15:16:45.387Z
-[worker break-50-worker] success job=1e51852c-46c0-465b-b86b-53d5819a8299 attempt=1 active=2
-[worker break-50-worker] start job=18fad71d-918e-4377-bbee-39c164924b3a attempt=1 active=2 at=2026-09-23T15:16:45.483Z
-[worker break-50-worker] success job=cd6aff78-c9f3-4484-91c7-b3798844107d attempt=1 active=2
-[worker break-50-worker] start job=433d16ac-b17a-4a86-b94c-12948a1451df attempt=1 active=2 at=2026-09-23T15:16:45.550Z
-[worker break-50-worker] success job=18fad71d-918e-4377-bbee-39c164924b3a attempt=1 active=2
-[worker break-50-worker] start job=9b63d0ed-5d8f-4465-ae9e-8ed19f8f80a5 attempt=1 active=2 at=2026-09-23T15:16:45.628Z
-[worker break-50-worker] success job=433d16ac-b17a-4a86-b94c-12948a1451df attempt=1 active=2
-[worker break-50-worker] start job=5cf91490-b39d-4201-979f-b060cf9a557e attempt=1 active=2 at=2026-09-23T15:16:45.685Z
-[worker break-50-worker] success job=9b63d0ed-5d8f-4465-ae9e-8ed19f8f80a5 attempt=1 active=2
-[worker break-50-worker] start job=43d646f4-a52e-4d2e-b2ab-5903fe60ea69 attempt=1 active=2 at=2026-09-23T15:16:45.768Z
-[worker break-50-worker] success job=5cf91490-b39d-4201-979f-b060cf9a557e attempt=1 active=2
-[worker break-50-worker] start job=c8212dd5-56bb-45b7-b094-4fa931f2dff3 attempt=1 active=2 at=2026-09-23T15:16:45.829Z
-[worker break-50-worker] success job=43d646f4-a52e-4d2e-b2ab-5903fe60ea69 attempt=1 active=2
-[worker break-50-worker] start job=ac713b51-d508-418d-8734-a6ae06834ad3 attempt=1 active=2 at=2026-09-23T15:16:45.910Z
-[worker break-50-worker] success job=c8212dd5-56bb-45b7-b094-4fa931f2dff3 attempt=1 active=2
-[worker break-50-worker] start job=9e9dc521-c0d7-4738-b75c-8bcf8700f65d attempt=1 active=2 at=2026-09-23T15:16:45.974Z
-[worker break-50-worker] success job=ac713b51-d508-418d-8734-a6ae06834ad3 attempt=1 active=2
-[worker break-50-worker] start job=bd546947-d6fb-41a6-9001-247f469470ac attempt=1 active=2 at=2026-09-23T15:16:46.048Z
-[worker break-50-worker] success job=9e9dc521-c0d7-4738-b75c-8bcf8700f65d attempt=1 active=2
-[worker break-50-worker] start job=65c6e7dc-03ba-47d5-95ec-75b7c239f25a attempt=1 active=2 at=2026-09-23T15:16:46.108Z
-[worker break-50-worker] success job=bd546947-d6fb-41a6-9001-247f469470ac attempt=1 active=2
-[worker break-50-worker] start job=3ab316b1-38ec-479b-932f-f1ec7df04459 attempt=1 active=2 at=2026-09-23T15:16:46.188Z
-[worker break-50-worker] success job=65c6e7dc-03ba-47d5-95ec-75b7c239f25a attempt=1 active=2
-[worker break-50-worker] start job=e1823e2d-48fb-406b-adac-f08e110dc621 attempt=1 active=2 at=2026-09-23T15:16:46.250Z
-[worker break-50-worker] success job=3ab316b1-38ec-479b-932f-f1ec7df04459 attempt=1 active=2
-[worker break-50-worker] start job=bded0c4c-bb17-4540-8a46-b6ee1db51c33 attempt=1 active=2 at=2026-09-23T15:16:46.325Z
-[worker break-50-worker] success job=e1823e2d-48fb-406b-adac-f08e110dc621 attempt=1 active=2
-[worker break-50-worker] start job=ca06355a-5a20-4620-acae-0971a366632f attempt=1 active=2 at=2026-09-23T15:16:46.405Z
-[worker break-50-worker] success job=bded0c4c-bb17-4540-8a46-b6ee1db51c33 attempt=1 active=2
-[worker break-50-worker] start job=b102c5f7-09c3-4004-b97c-3350a9c831af attempt=1 active=2 at=2026-09-23T15:16:46.476Z
-[worker break-50-worker] success job=ca06355a-5a20-4620-acae-0971a366632f attempt=1 active=2
-[worker break-50-worker] start job=c75cf016-0fea-4aca-a6e5-57549d801027 attempt=1 active=2 at=2026-09-23T15:16:46.532Z
-[worker break-50-worker] success job=b102c5f7-09c3-4004-b97c-3350a9c831af attempt=1 active=2
-[worker break-50-worker] start job=2c9fd84a-a6b1-4298-9ebe-71a337ed9462 attempt=1 active=2 at=2026-09-23T15:16:46.611Z
-[worker break-50-worker] success job=c75cf016-0fea-4aca-a6e5-57549d801027 attempt=1 active=2
-[worker break-50-worker] start job=ec8cf286-4b09-4109-98dd-1117d7855c54 attempt=1 active=2 at=2026-09-23T15:16:46.672Z
-[worker break-50-worker] success job=2c9fd84a-a6b1-4298-9ebe-71a337ed9462 attempt=1 active=2
-[worker break-50-worker] start job=a1b1d9aa-f337-41af-a5bc-ea0a7f030cd0 attempt=1 active=2 at=2026-09-23T15:16:46.749Z
-[worker break-50-worker] success job=ec8cf286-4b09-4109-98dd-1117d7855c54 attempt=1 active=2
-[worker break-50-worker] start job=42e94262-cf8e-43ea-8115-c36cc74ee012 attempt=1 active=2 at=2026-09-23T15:16:46.798Z
-[worker break-50-worker] success job=a1b1d9aa-f337-41af-a5bc-ea0a7f030cd0 attempt=1 active=2
-[worker break-50-worker] start job=720d5bef-8af5-4576-9db3-e0a8daa5b704 attempt=1 active=2 at=2026-09-23T15:16:46.894Z
-[worker break-50-worker] success job=42e94262-cf8e-43ea-8115-c36cc74ee012 attempt=1 active=2
-[worker break-50-worker] start job=ee4813b4-036b-40a4-8552-f8a78f76a405 attempt=1 active=2 at=2026-09-23T15:16:46.934Z
-[worker break-50-worker] success job=720d5bef-8af5-4576-9db3-e0a8daa5b704 attempt=1 active=2
-[worker break-50-worker] start job=be095865-916b-4e15-a55a-1c526af83296 attempt=1 active=2 at=2026-09-23T15:16:47.073Z
-[worker break-50-worker] success job=ee4813b4-036b-40a4-8552-f8a78f76a405 attempt=1 active=2
-[worker break-50-worker] start job=eab2a994-c4bb-4356-8e21-15035d6ab8d9 attempt=1 active=2 at=2026-09-23T15:16:47.161Z
-[worker break-50-worker] success job=be095865-916b-4e15-a55a-1c526af83296 attempt=1 active=2
-[worker break-50-worker] start job=75c01410-c352-4ca2-81ca-aa8ad7c81877 attempt=1 active=2 at=2026-09-23T15:16:47.224Z
-[worker break-50-worker] success job=eab2a994-c4bb-4356-8e21-15035d6ab8d9 attempt=1 active=2
-[worker break-50-worker] start job=dc87c00a-45e8-4ecf-b595-7dc7c9b5156e attempt=1 active=2 at=2026-09-23T15:16:47.308Z
-[worker break-50-worker] success job=75c01410-c352-4ca2-81ca-aa8ad7c81877 attempt=1 active=2
-[worker break-50-worker] start job=dfb6b4f5-1b66-4529-9444-a53b313bb5ca attempt=1 active=2 at=2026-09-23T15:16:47.368Z
-[worker break-50-worker] success job=dc87c00a-45e8-4ecf-b595-7dc7c9b5156e attempt=1 active=2
-[worker break-50-worker] start job=28943816-d074-4624-80f6-baef82e096be attempt=1 active=2 at=2026-09-23T15:16:47.444Z
-[worker break-50-worker] success job=dfb6b4f5-1b66-4529-9444-a53b313bb5ca attempt=1 active=2
-[worker break-50-worker] start job=02dcfe99-aae5-462c-bd6b-7abaa26da1f8 attempt=1 active=2 at=2026-09-23T15:16:47.511Z
-[worker break-50-worker] success job=28943816-d074-4624-80f6-baef82e096be attempt=1 active=2
-[worker break-50-worker] start job=8503e495-4971-4c18-b67c-a56e0bbc18aa attempt=1 active=2 at=2026-09-23T15:16:47.590Z
-[worker break-50-worker] success job=02dcfe99-aae5-462c-bd6b-7abaa26da1f8 attempt=1 active=2
-[worker break-50-worker] start job=d7e8bd38-664e-4eaf-a2ca-9cbfd86b3179 attempt=1 active=2 at=2026-09-23T15:16:47.651Z
-[worker break-50-worker] success job=8503e495-4971-4c18-b67c-a56e0bbc18aa attempt=1 active=2
-[worker break-50-worker] start job=04555017-2f3f-456d-8471-816f337ee009 attempt=1 active=2 at=2026-09-23T15:16:47.753Z
-[worker break-50-worker] success job=d7e8bd38-664e-4eaf-a2ca-9cbfd86b3179 attempt=1 active=2
-[worker break-50-worker] start job=edec11c2-6ffe-4a16-8b2f-9aa2967231bf attempt=1 active=2 at=2026-09-23T15:16:47.787Z
-[worker break-50-worker] success job=04555017-2f3f-456d-8471-816f337ee009 attempt=1 active=2
-[worker break-50-worker] start job=fdba6d41-bf66-4997-8698-42c3fe17e86f attempt=1 active=2 at=2026-09-23T15:16:47.905Z
-[worker break-50-worker] success job=edec11c2-6ffe-4a16-8b2f-9aa2967231bf attempt=1 active=2
-[worker break-50-worker] start job=22a1346d-efc4-42dd-bbe2-278245cbb736 attempt=1 active=2 at=2026-09-23T15:16:47.917Z
-[worker break-50-worker] success job=fdba6d41-bf66-4997-8698-42c3fe17e86f attempt=1 active=2
-[worker break-50-worker] success job=22a1346d-efc4-42dd-bbe2-278245cbb736 attempt=1 active=1
-[worker break-50-worker] start job=74982d17-3436-4749-bc42-c1cc79a75927 attempt=1 active=1 at=2026-09-23T15:16:48.052Z
-[worker break-50-worker] start job=54992014-67e1-4bdd-aaf4-275494db0e66 attempt=1 active=2 at=2026-09-23T15:16:48.055Z
-[worker break-50-worker] success job=54992014-67e1-4bdd-aaf4-275494db0e66 attempt=1 active=2
-[worker break-50-worker] success job=74982d17-3436-4749-bc42-c1cc79a75927 attempt=1 active=1
-[worker break-50-worker] start job=1b44715c-4656-4dfb-be0e-938ab28512d2 attempt=1 active=1 at=2026-09-23T15:16:48.196Z
-[worker break-50-worker] start job=67dfc898-0cdf-4ddf-b936-70c5540c2aa4 attempt=1 active=2 at=2026-09-23T15:16:48.199Z
-[worker break-50-worker] success job=1b44715c-4656-4dfb-be0e-938ab28512d2 attempt=1 active=2
-[worker break-50-worker] success job=67dfc898-0cdf-4ddf-b936-70c5540c2aa4 attempt=1 active=1
-[worker break-50-worker] start job=a2ed4df2-f8af-4dc2-b00f-5c66936163eb attempt=1 active=1 at=2026-09-23T15:16:48.344Z
-[worker break-50-worker] start job=168ace55-42e9-4463-89bd-a680a00f3086 attempt=1 active=2 at=2026-09-23T15:16:48.347Z
-[worker break-50-worker] success job=168ace55-42e9-4463-89bd-a680a00f3086 attempt=1 active=2
-[worker break-50-worker] success job=a2ed4df2-f8af-4dc2-b00f-5c66936163eb attempt=1 active=1
-[worker break-50-worker] start job=498eddfb-d12d-4267-ae5d-faec0b8777fd attempt=1 active=1 at=2026-09-23T15:16:48.499Z
-[worker break-50-worker] start job=5aacc353-973a-4bbb-9d2e-53fd6cb628e9 attempt=1 active=2 at=2026-09-23T15:16:48.501Z
-[worker break-50-worker] success job=5aacc353-973a-4bbb-9d2e-53fd6cb628e9 attempt=1 active=2
-[worker break-50-worker] success job=498eddfb-d12d-4267-ae5d-faec0b8777fd attempt=1 active=1
+[worker break-50-worker] start job=3f9ce4cb-50f2-4649-91df-fef3b416d3df attempt=1 active=1 at=2026-09-24T08:02:57.607Z
+[worker break-50-worker] start job=5aa9b40b-81db-4ba1-a306-314c936d9456 attempt=1 active=2 at=2026-09-24T08:02:57.612Z
+[worker break-50-worker] success job=5aa9b40b-81db-4ba1-a306-314c936d9456 attempt=1 active=2
+[worker break-50-worker] start job=978d357b-3d15-431d-9b2c-3e27a4ebc718 attempt=1 active=2 at=2026-09-24T08:02:57.755Z
+[worker break-50-worker] success job=3f9ce4cb-50f2-4649-91df-fef3b416d3df attempt=1 active=2
+[worker break-50-worker] start job=0cd67046-90f1-46db-b15d-c9226dfa1e78 attempt=1 active=2 at=2026-09-24T08:02:57.818Z
+[worker break-50-worker] success job=978d357b-3d15-431d-9b2c-3e27a4ebc718 attempt=1 active=2
+[worker break-50-worker] start job=21003e9a-a412-4eb7-ad99-e5149c3e756e attempt=1 active=2 at=2026-09-24T08:02:57.888Z
+[worker break-50-worker] success job=0cd67046-90f1-46db-b15d-c9226dfa1e78 attempt=1 active=2
+[worker break-50-worker] start job=c9edc2a6-017f-49f9-a3c8-b3bcc3778736 attempt=1 active=2 at=2026-09-24T08:02:57.949Z
+[worker break-50-worker] success job=21003e9a-a412-4eb7-ad99-e5149c3e756e attempt=1 active=2
+[worker break-50-worker] start job=520d7a23-2201-44bb-a74a-b94eb7f05680 attempt=1 active=2 at=2026-09-24T08:02:58.008Z
+[worker break-50-worker] success job=c9edc2a6-017f-49f9-a3c8-b3bcc3778736 attempt=1 active=2
+[worker break-50-worker] start job=9b127803-ec94-4a18-a24d-f5295669ec44 attempt=1 active=2 at=2026-09-24T08:02:58.074Z
+[worker break-50-worker] success job=520d7a23-2201-44bb-a74a-b94eb7f05680 attempt=1 active=2
+[worker break-50-worker] start job=6f035c19-4632-4cd2-89c4-001758bec578 attempt=1 active=2 at=2026-09-24T08:02:58.134Z
+[worker break-50-worker] success job=9b127803-ec94-4a18-a24d-f5295669ec44 attempt=1 active=2
+[worker break-50-worker] start job=7e78a0fd-8047-4883-b557-1fcc3da7493c attempt=1 active=2 at=2026-09-24T08:02:58.194Z
+[worker break-50-worker] success job=6f035c19-4632-4cd2-89c4-001758bec578 attempt=1 active=2
+[worker break-50-worker] start job=d9370a4e-9532-4132-b35f-f610a67135cc attempt=1 active=2 at=2026-09-24T08:02:58.258Z
+[worker break-50-worker] success job=7e78a0fd-8047-4883-b557-1fcc3da7493c attempt=1 active=2
+[worker break-50-worker] start job=50c6ead4-1636-4209-9a1f-7f2d6854b367 attempt=1 active=2 at=2026-09-24T08:02:58.324Z
+[worker break-50-worker] success job=d9370a4e-9532-4132-b35f-f610a67135cc attempt=1 active=2
+[worker break-50-worker] start job=fddf2043-b04d-4775-b086-7319cd4d3246 attempt=1 active=2 at=2026-09-24T08:02:58.380Z
+[worker break-50-worker] success job=50c6ead4-1636-4209-9a1f-7f2d6854b367 attempt=1 active=2
+[worker break-50-worker] start job=cbf29239-f4be-4e2a-ba00-33aed765ae6f attempt=1 active=2 at=2026-09-24T08:02:58.445Z
+[worker break-50-worker] success job=fddf2043-b04d-4775-b086-7319cd4d3246 attempt=1 active=2
+[worker break-50-worker] start job=60c2e218-cc6a-470d-a928-d10888162247 attempt=1 active=2 at=2026-09-24T08:02:58.507Z
+[worker break-50-worker] success job=cbf29239-f4be-4e2a-ba00-33aed765ae6f attempt=1 active=2
+[worker break-50-worker] start job=3b86cf0a-4821-4ae8-86d6-f43d29bed13f attempt=1 active=2 at=2026-09-24T08:02:58.568Z
+[worker break-50-worker] success job=60c2e218-cc6a-470d-a928-d10888162247 attempt=1 active=2
+[worker break-50-worker] start job=2c3b0b24-a458-49b5-af9d-153563049921 attempt=1 active=2 at=2026-09-24T08:02:58.630Z
+[worker break-50-worker] success job=3b86cf0a-4821-4ae8-86d6-f43d29bed13f attempt=1 active=2
+[worker break-50-worker] start job=08556b93-65f5-409a-bd65-52a333a47f59 attempt=1 active=2 at=2026-09-24T08:02:58.691Z
+[worker break-50-worker] success job=2c3b0b24-a458-49b5-af9d-153563049921 attempt=1 active=2
+[worker break-50-worker] start job=91b9b848-6048-422f-857d-ad4d2241f289 attempt=1 active=2 at=2026-09-24T08:02:58.755Z
+[worker break-50-worker] success job=08556b93-65f5-409a-bd65-52a333a47f59 attempt=1 active=2
+[worker break-50-worker] start job=3cae8e54-6d86-464d-88fd-f7cf049bad62 attempt=1 active=2 at=2026-09-24T08:02:58.819Z
+[worker break-50-worker] success job=91b9b848-6048-422f-857d-ad4d2241f289 attempt=1 active=2
+[worker break-50-worker] start job=9e1418d2-400c-41d4-9d9a-755de602ebb0 attempt=1 active=2 at=2026-09-24T08:02:58.881Z
+[worker break-50-worker] success job=3cae8e54-6d86-464d-88fd-f7cf049bad62 attempt=1 active=2
+[worker break-50-worker] start job=4c1ade63-803d-4e1c-8f4b-4885e3de11a9 attempt=1 active=2 at=2026-09-24T08:02:58.951Z
+[worker break-50-worker] success job=9e1418d2-400c-41d4-9d9a-755de602ebb0 attempt=1 active=2
+[worker break-50-worker] start job=2f3f1692-67ed-4592-85ba-b56d006905b9 attempt=1 active=2 at=2026-09-24T08:02:59.005Z
+[worker break-50-worker] success job=4c1ade63-803d-4e1c-8f4b-4885e3de11a9 attempt=1 active=2
+[worker break-50-worker] start job=dd1d8fca-6655-4abd-a2c3-939f3ff6b5a7 attempt=1 active=2 at=2026-09-24T08:02:59.086Z
+[worker break-50-worker] success job=2f3f1692-67ed-4592-85ba-b56d006905b9 attempt=1 active=2
+[worker break-50-worker] start job=f26567ea-5d42-4b42-a256-94f4a3fbed66 attempt=1 active=2 at=2026-09-24T08:02:59.136Z
+[worker break-50-worker] success job=dd1d8fca-6655-4abd-a2c3-939f3ff6b5a7 attempt=1 active=2
+[worker break-50-worker] start job=be9a2ca8-8d55-4f26-ba1b-b0231bc99c59 attempt=1 active=2 at=2026-09-24T08:02:59.204Z
+[worker break-50-worker] success job=f26567ea-5d42-4b42-a256-94f4a3fbed66 attempt=1 active=2
+[worker break-50-worker] start job=ecff1532-036d-4fe9-891c-1f9c2e0776f4 attempt=1 active=2 at=2026-09-24T08:02:59.252Z
+[worker break-50-worker] success job=be9a2ca8-8d55-4f26-ba1b-b0231bc99c59 attempt=1 active=2
+[worker break-50-worker] start job=ced1d082-d85d-49a3-b70b-4a7ce0d66b8c attempt=1 active=2 at=2026-09-24T08:02:59.334Z
+[worker break-50-worker] success job=ecff1532-036d-4fe9-891c-1f9c2e0776f4 attempt=1 active=2
+[worker break-50-worker] start job=c9a9ce7a-425d-416f-bc3c-80ff7e25f71c attempt=1 active=2 at=2026-09-24T08:02:59.386Z
+[worker break-50-worker] success job=ced1d082-d85d-49a3-b70b-4a7ce0d66b8c attempt=1 active=2
+[worker break-50-worker] start job=083d7f1d-89d9-4f99-a6d1-4543ab02453f attempt=1 active=2 at=2026-09-24T08:02:59.469Z
+[worker break-50-worker] success job=c9a9ce7a-425d-416f-bc3c-80ff7e25f71c attempt=1 active=2
+[worker break-50-worker] start job=12ca2a62-e1fe-4c7c-86bc-c0331e50c860 attempt=1 active=2 at=2026-09-24T08:02:59.515Z
+[worker break-50-worker] success job=083d7f1d-89d9-4f99-a6d1-4543ab02453f attempt=1 active=2
+[worker break-50-worker] start job=e7058960-7f20-4a09-a5b9-7ecbf6d03275 attempt=1 active=2 at=2026-09-24T08:02:59.599Z
+[worker break-50-worker] success job=12ca2a62-e1fe-4c7c-86bc-c0331e50c860 attempt=1 active=2
+[worker break-50-worker] start job=cd9f41fa-808c-4857-9e25-ef35dec79212 attempt=1 active=2 at=2026-09-24T08:02:59.640Z
+[worker break-50-worker] success job=e7058960-7f20-4a09-a5b9-7ecbf6d03275 attempt=1 active=2
+[worker break-50-worker] start job=22b72de0-64fc-4550-9a18-81a2b5ab3366 attempt=1 active=2 at=2026-09-24T08:02:59.732Z
+[worker break-50-worker] success job=cd9f41fa-808c-4857-9e25-ef35dec79212 attempt=1 active=2
+[worker break-50-worker] start job=97645172-9fff-493c-a3a0-0c999a8235dd attempt=1 active=2 at=2026-09-24T08:02:59.759Z
+[worker break-50-worker] success job=22b72de0-64fc-4550-9a18-81a2b5ab3366 attempt=1 active=2
+[worker break-50-worker] start job=1b0af88b-07e2-4b3f-8aa3-359576b5ee73 attempt=1 active=2 at=2026-09-24T08:02:59.859Z
+[worker break-50-worker] success job=97645172-9fff-493c-a3a0-0c999a8235dd attempt=1 active=2
+[worker break-50-worker] start job=a937bfe7-00c4-4bbc-9446-fbbeef9a26f4 attempt=1 active=2 at=2026-09-24T08:02:59.884Z
+[worker break-50-worker] success job=1b0af88b-07e2-4b3f-8aa3-359576b5ee73 attempt=1 active=2
+[worker break-50-worker] success job=a937bfe7-00c4-4bbc-9446-fbbeef9a26f4 attempt=1 active=1
+[worker break-50-worker] start job=e3497b09-3ca3-420a-b23a-7ae5c1c00aa4 attempt=1 active=1 at=2026-09-24T08:03:00.190Z
+[worker break-50-worker] start job=12a292a3-4555-4d3f-8ed3-b9cab9f91a9a attempt=1 active=2 at=2026-09-24T08:03:00.193Z
+[worker break-50-worker] success job=12a292a3-4555-4d3f-8ed3-b9cab9f91a9a attempt=1 active=2
+[worker break-50-worker] success job=e3497b09-3ca3-420a-b23a-7ae5c1c00aa4 attempt=1 active=1
+[worker break-50-worker] start job=4928ef21-469b-49f8-930f-f0162264896b attempt=1 active=1 at=2026-09-24T08:03:00.345Z
+[worker break-50-worker] start job=163d713b-6f2e-4e7b-8ff5-22953e106427 attempt=1 active=2 at=2026-09-24T08:03:00.348Z
+[worker break-50-worker] success job=163d713b-6f2e-4e7b-8ff5-22953e106427 attempt=1 active=2
+[worker break-50-worker] success job=4928ef21-469b-49f8-930f-f0162264896b attempt=1 active=1
+[worker break-50-worker] start job=ec9c8e4e-3bdf-454f-a000-db191852993d attempt=1 active=1 at=2026-09-24T08:03:00.487Z
+[worker break-50-worker] start job=064baeb7-96d0-4075-a1ca-d377212307b1 attempt=1 active=2 at=2026-09-24T08:03:00.488Z
+[worker break-50-worker] success job=ec9c8e4e-3bdf-454f-a000-db191852993d attempt=1 active=2
+[worker break-50-worker] success job=064baeb7-96d0-4075-a1ca-d377212307b1 attempt=1 active=1
+[worker break-50-worker] start job=8c060ad4-292f-4ac4-9491-77a85099d3e9 attempt=1 active=1 at=2026-09-24T08:03:00.626Z
+[worker break-50-worker] start job=e2aac70f-84bd-4334-acd1-6423b78ebdcc attempt=1 active=2 at=2026-09-24T08:03:00.629Z
+[worker break-50-worker] success job=e2aac70f-84bd-4334-acd1-6423b78ebdcc attempt=1 active=2
+[worker break-50-worker] success job=8c060ad4-292f-4ac4-9491-77a85099d3e9 attempt=1 active=1
+[worker break-50-worker] start job=d1c6f28e-8a7a-434d-8541-f7bc55eb7d35 attempt=1 active=1 at=2026-09-24T08:03:00.766Z
+[worker break-50-worker] start job=fe1e8eb1-c5b6-43c0-857a-6a7bc8581e3e attempt=1 active=2 at=2026-09-24T08:03:00.767Z
+[worker break-50-worker] success job=fe1e8eb1-c5b6-43c0-857a-6a7bc8581e3e attempt=1 active=2
+[worker break-50-worker] success job=d1c6f28e-8a7a-434d-8541-f7bc55eb7d35 attempt=1 active=1
+[worker break-50-worker] start job=f9150795-b2aa-4f2f-b2d6-55c0eeaa6318 attempt=1 active=1 at=2026-09-24T08:03:00.904Z
+[worker break-50-worker] start job=37b5638b-5e9e-4706-8308-1028c07e1168 attempt=1 active=2 at=2026-09-24T08:03:00.907Z
+[worker break-50-worker] success job=f9150795-b2aa-4f2f-b2d6-55c0eeaa6318 attempt=1 active=2
+[worker break-50-worker] success job=37b5638b-5e9e-4706-8308-1028c07e1168 attempt=1 active=1
+[worker break-50-worker] start job=9ef797cb-2fff-446a-9152-6f038c8c6e0f attempt=1 active=1 at=2026-09-24T08:03:01.030Z
+[worker break-50-worker] success job=9ef797cb-2fff-446a-9152-6f038c8c6e0f attempt=1 active=1

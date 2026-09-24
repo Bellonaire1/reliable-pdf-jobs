@@ -1,7 +1,7 @@
-Worker PID killed: 26164
-Job id: 3e379fb6-c402-49e4-a0e0-65898c56fdd6
+Worker PID killed: 26184
+Job id: 63c38a98-f876-4cc7-8592-fc4ea416eb29
 BEFORE KILL status: PROCESSING
-BEFORE KILL PDF exists: YES (C:\Users\USER\Desktop\reliable-pdf-jobs\outputs\3e379fb6-c402-49e4-a0e0-65898c56fdd6.pdf)
+BEFORE KILL PDF exists: YES (C:\Users\USER\Desktop\reliable-pdf-jobs\outputs\63c38a98-f876-4cc7-8592-fc4ea416eb29.pdf)
 AFTER KILL status: PROCESSING
 AFTER RECOVERY status: SUCCEEDED
 AFTER RECOVERY attempts: 2
@@ -10,10 +10,10 @@ Existing PDF reused: PASS
 
 Worker log before kill:
 [worker break-stuck-before-kill] started concurrency=1
-[worker break-stuck-before-kill] start job=3e379fb6-c402-49e4-a0e0-65898c56fdd6 attempt=1 active=1 at=2026-09-23T15:16:53.403Z
+[worker break-stuck-before-kill] start job=63c38a98-f876-4cc7-8592-fc4ea416eb29 attempt=1 active=1 at=2026-09-24T08:03:03.749Z
 
 Worker log after recovery:
 [worker break-stuck-recovery] started concurrency=1
-[worker break-stuck-recovery] recovered job=3e379fb6-c402-49e4-a0e0-65898c56fdd6 previous=PROCESSING resulting=PENDING attempts=1
-[worker break-stuck-recovery] start job=3e379fb6-c402-49e4-a0e0-65898c56fdd6 attempt=2 active=1 at=2026-09-23T15:16:55.498Z
-[worker break-stuck-recovery] success job=3e379fb6-c402-49e4-a0e0-65898c56fdd6 attempt=2 active=1
+[worker break-stuck-recovery] recovered job=63c38a98-f876-4cc7-8592-fc4ea416eb29 previous=PROCESSING resulting=PENDING attempts=1
+[worker break-stuck-recovery] start job=63c38a98-f876-4cc7-8592-fc4ea416eb29 attempt=2 active=1 at=2026-09-24T08:03:04.937Z
+[worker break-stuck-recovery] success job=63c38a98-f876-4cc7-8592-fc4ea416eb29 attempt=2 active=1

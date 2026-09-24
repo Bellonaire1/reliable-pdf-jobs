@@ -13,7 +13,14 @@
     "verify:worker": "tsx scripts/verify-worker.ts",
     "verify:retries": "tsx scripts/verify-retries.ts",
     "verify:recovery": "tsx scripts/verify-recovery.ts",
-    "break-it": "tsx scripts/break-it.ts"
+    "break-it": "tsx scripts/break-it.ts",
+    "evidence:statuses": "tsx scripts/evidence-statuses.ts",
+    "evidence:backoff": "tsx scripts/evidence-backoff.ts",
+    "evidence:concurrency": "tsx scripts/evidence-concurrency.ts",
+    "evidence:crash:prepare": "tsx scripts/evidence-crash.ts prepare",
+    "evidence:crash:kill": "tsx scripts/evidence-crash.ts kill",
+    "evidence:crash:recover": "tsx scripts/evidence-crash.ts recover",
+    "evidence:capture:crash": "tsx scripts/evidence-capture.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",

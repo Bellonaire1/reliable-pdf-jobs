@@ -174,6 +174,9 @@ async function testFailToDead() {
     `Observed attempts: ${finalJob.attempts}`,
     `Observed FAILED scheduling delays (ms): ${delays.join(", ")}`,
     `Logged calculated backoffs (ms): ${loggedDelays.join(", ")}`,
+    ...snapshots
+      .filter((snapshot) => snapshot.status === "FAILED" && snapshot.finishedAt)
+      .map((snapshot) => `Attempt ${snapshot.attempts} failureTime=${snapshot.finishedAt?.toISOString()} scheduledRunAt=${snapshot.runAt.toISOString()} backoff=${snapshot.runAt.getTime() - (snapshot.finishedAt as Date).getTime()} ms`),
     "Jitter configuration: MAX_JITTER_MS=0; observed jitter: 0 ms",
     `Final DEAD timestamp: ${finalJob.finishedAt?.toISOString()}`,
     "No fourth execution: PASS",
