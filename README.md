@@ -99,6 +99,24 @@ src/dead-letter.ts    # Minimal diagnostic dead-letter page
 
 The API server does not start the worker. Run them as separate processes with `npm run dev` and `npm run worker`.
 
+## Setup and Operation
+
+Requirements: Node.js, PostgreSQL, and npm. Install dependencies, create a local untracked `.env` from `.env.example`, and set `DATABASE_URL` to the target PostgreSQL database.
+
+```bash
+npm install
+npx prisma migrate deploy
+npm run dev
+```
+
+Start the worker in a second process:
+
+```bash
+npm run worker
+```
+
+The API listens on `PORT` (default `3000`). Enqueue with `POST /api/v1/jobs` and a unique `Idempotency-Key`; poll `GET /api/v1/jobs/:id` for status and timestamps. The dead-letter page is `GET /dead-letter`.
+
 ## Enqueue Contract
 
 `POST /api/v1/jobs` validates a report request, creates a `PENDING` job, and returns `202 Accepted` immediately. `202` is used because the request has been accepted for processing but the PDF does not exist yet; `201 Created` or `200 OK` would incorrectly suggest that the report resource or slow work is already complete.
@@ -204,11 +222,17 @@ Recovery counts the abandoned execution exactly once because claims do not incre
 
 `POST /api/v1/jobs/:id/retry` is allowed only for `DEAD` jobs. It atomically changes the same row back to `PENDING`, resets `attempts` to `0`, clears attempt error/timestamps, and preserves the job id, payload, type, idempotency key, and any existing output. A second concurrent retry receives `409`; no second row is created.
 
-## Testing the Crash Window
+## Testing and Evidence
 
 `WORK_POST_OUTPUT_DELAY_MS` is a development/test-only aid. When greater than zero, the worker waits after the final PDF has been atomically written but before recording database success. This creates a deterministic window for terminating the worker and verifying `PROCESSING` recovery and output reuse. Its default is `0` and it is not public request input.
 
-The final 50-job break-it run has not been performed yet.
+The genuine break-it verification harness covers 50-job concurrency, fail-until-`DEAD`, a real worker kill and recovery, duplicate idempotency keys, and two workers sharing one queue:
+
+```bash
+npm run break-it
+```
+
+Text results are in `BREAK-IT-RESULTS.md` and `evidence/*.txt`. The seven automated PNGs, their completion status, and their source provenance are in `evidence/README.md` and `evidence/VISUAL-EVIDENCE-PROVENANCE.md`.
 
 ## Validation
 
