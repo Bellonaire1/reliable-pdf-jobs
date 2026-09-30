@@ -4,7 +4,7 @@
 
 **Why:** Manual retry is a human recovery path and should only operate on DEAD jobs.
 
-**What changed:** Added a PostgreSQL-backed integration verification script covering successful DEAD retry state transitions and rejection of SUCCEEDED, PENDING, PROCESSING, and FAILED jobs.
+**What changed:** Added a PostgreSQL-backed integration verification script covering successful DEAD retry state transitions, preservation of immutable job fields, missing-job and concurrent retry guards, and rejection of SUCCEEDED, PENDING, PROCESSING, and FAILED jobs.
 
 **How to test:**
 
@@ -20,5 +20,6 @@ npx prisma validate
 - Whether database state is verified correctly
 - Whether non-DEAD statuses are rejected
 - Whether the same job row is reused
+- Whether missing and concurrent retries are handled correctly
 - Test isolation and cleanup
 - Missing edge cases
