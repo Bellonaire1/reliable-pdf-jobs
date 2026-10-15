@@ -2,6 +2,10 @@
 
 Task 2, Steps 5-8: a database-backed background job system with idempotent work, recovery, and a dead-letter view.
 
+## Technical article
+
+[Retries Aren’t Enough: What I Learned Building Reliable Background Jobs with PostgreSQL](docs/reliable-background-jobs.md)
+
 ## Purpose
 
 The HTTP request path only validates the request and enqueues a database job. It returns an HTTP `202` response with the job id without doing slow work. PDF generation happens later in a separately started worker process. This increment also recovers stuck work and provides a diagnostic dead-letter view with manual retry.
