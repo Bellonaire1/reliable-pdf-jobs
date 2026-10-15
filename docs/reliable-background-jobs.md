@@ -11,7 +11,7 @@ I started this project believing that simply retrying a failed background job wo
 All of the examples below come directly from this repository and are verified by the break‑it test harness.
 
 ## The lifecycle
-Jobs flow through the following states (see **README.md** line 13‑17):
+Jobs flow through the following states (see the Job Lifecycle section in README.md):
 
 - `PENDING` – accepted and waiting for `runAt`.
 - `PROCESSING` – claimed by a worker.
@@ -19,7 +19,7 @@ Jobs flow through the following states (see **README.md** line 13‑17):
 - `FAILED` – the attempt failed but the job is still retryable.
 - `DEAD` – `maxAttempts` exhausted; human‑intervention required.
 
-The API returns **202 Accepted** for `POST /api/v1/jobs` (see **README.md** line 7‑8) because the request only enqueues a job; the slow PDF generation happens later in a separate worker process.
+The API returns **202 Accepted** for `POST /api/v1/jobs` (see the Enqueue Contract section in README.md) because the request only enqueues a job; the slow PDF generation happens later in a separate worker process.
 
 ## Lesson 1: Idempotency starts when the job is created
 A naïve "check‑then‑insert" approach suffers from a race condition when two HTTP requests arrive simultaneously:
@@ -43,6 +43,7 @@ try {
       response.status(202).json({ data: { jobId: existingJob.id, status: existingJob.status } });
       return;
     }
+}
 }
 ```
 
@@ -78,10 +79,10 @@ return jobs[0] ?? null;
 
 The `FOR UPDATE SKIP LOCKED` clause locks the candidate row and skips any row already locked by another worker, guaranteeing that **only one worker** can transition a particular job to `PROCESSING`.
 
-**Evidence:** `BREAK-IT-RESULTS.md` Test 5 (two workers, 20 jobs) reports *20 unique jobs, 0 duplicate claims, 0 duplicate outputs* – **PASS** (lines 37‑43).
+**Evidence:** `BREAK-IT-RESULTS.md` Test 5 (two workers, 20 jobs) reports *20 unique jobs, 0 duplicate claims, 0 duplicate outputs* – **PASS**.
 
 ## Lesson 3: Retries need policy, not just repetition
-When a job fails, the worker records the failure and schedules a future retry. The delay is a **bounded exponential backoff with jitter** (see **README.md** line 193‑198 and `src/worker/retry.ts`):
+When a job fails, the worker records the failure and schedules a future retry. The delay is a **bounded exponential backoff with jitter** (see the Failure and Retry Lifecycle section in README.md and `src/worker/retry.ts`):
 
 ```ts
 // src/worker/retry.ts – calculateBackoffWithJitter (excerpt)
@@ -99,12 +100,12 @@ export function calculateBackoffWithJitter(attempt: number): number {
 ## Lesson 4: Worker crashes create a different problem
 A worker may generate a PDF **and then die** before updating the job row to `SUCCEEDED`. The job remains `PROCESSING`. `recoverStuckJobs()` detects the timed‑out `PROCESSING` row, increments the abandoned execution attempt, and moves it back to `PENDING` when attempts remain. A worker can then claim it again; `generatePdf()` sees the existing valid PDF and reuses it; the later execution records success.
 
-**Evidence:** `BREAK-IT-RESULTS.md` Test 3 kills a worker after the PDF is written. The first execution produced the PDF but was killed before finalizing; recovery counted that as attempt 1. The subsequent successful execution/reuse became attempt 2, and only one final PDF existed – **PASS** (lines 21‑27).
+**Evidence:** `BREAK-IT-RESULTS.md` Test 3 kills a worker after the PDF is written. The first execution produced the PDF but was killed before finalizing; recovery counted that as attempt 1. The subsequent successful execution/reuse became attempt 2, and only one final PDF existed – **PASS**.
 
 ## Lesson 5: Reliability needs bounded concurrency
 Unbounded workers could overwhelm the database or file system. The `WORKER_CONCURRENCY` setting caps the number of jobs a worker processes simultaneously. The break‑it harness proved that the limit is respected:
 
-**Evidence:** `BREAK-IT-RESULTS.md` Test 1 enqueues 50 jobs with `WORKER_CONCURRENCY = 2`. The observed maximum active jobs were **2**, all 50 jobs completed, and there were **0** duplicate processing events – **PASS** (lines 5‑11).
+**Evidence:** `BREAK-IT-RESULTS.md` Test 1 enqueues 50 jobs with `WORKER_CONCURRENCY = 2`. The observed maximum active jobs were **2**, all 50 jobs completed, and there were **0** duplicate processing events – **PASS**.
 
 ## What this system does **NOT** prove
 * It has not been benchmarked at thousands of jobs per second.
@@ -113,10 +114,10 @@ Unbounded workers could overwhelm the database or file system. The `WORKER_CONCU
 * There is no automated operator notification (e.g., Slack, email) for `DEAD` jobs.
 * The PostgreSQL queue is a learning implementation, not a claim that it replaces dedicated queue products such as RabbitMQ or SQS.
 
-## What I would change for production (insights from `DEFENCE‑NOTES.md`)
-* **Durable storage:** Move PDFs to an object store (e.g., S3) and store a reference in the DB.
+## What I would change for production
+* **Durable storage:** Store PDFs in shared/object storage and keep a reference in the DB.
 * **Monitoring:** Track queue depth, job processing age, stuck‑job recovery, retry/DEAD rates, latency, throughput, worker health, database latency, and storage capacity.
-* **Process supervision:** Run workers under a supervisor to ensure automatic restarts and health checks.
+* **Deployment/process supervision:** Run workers under a supervisor or orchestrator to ensure automatic restarts and health checks.
 * **Security controls:** Apply authentication, authorization, and secure configuration practices.
 * **Migrations:** Use Prisma migrations with version control and a CI‑tested migration plan.
 * **Operational ownership:** Assign clear on‑call responsibilities for stuck‑job recovery and dead‑letter handling.
