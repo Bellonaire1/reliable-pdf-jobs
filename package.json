@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "verify:api": "tsx scripts/verify-api.ts",
+    "verify:retry-guards": "tsx scripts/verify-retry-guards.ts",
     "worker": "tsx src/worker.ts",
     "verify:worker": "tsx scripts/verify-worker.ts",
     "verify:retries": "tsx scripts/verify-retries.ts",
